@@ -3,13 +3,11 @@
 (require "./model.rkt")
 
 (contracted
- [get-artist              (-> artist-model? any/c)]
- [search-artists          (-> artist-model? (listof any/c))]
- [search-artists-by-query (-> string? (listof any/c))]
+ [get-artist        (-> artist-model? any/c)]
+ [search-artists    (-> artist-model? (listof any/c))]
 
- [artist-url              (-> any/c string?)]
- [artist-img-url          (-> any/c string?)]
+ [artist-url        (-> any/c string?)]
+ [artist-img-url    (-> any/c string?)]
 
- [artist-tracks-top       (-> any/c (listof track-model?))]
- [artist-albums           (-> any/c (listof album-model?))]
- )
+ [artist-tracks-top (-> any/c (listof any/c))]
+ [artist-albums     (-> any/c (listof any/c))])

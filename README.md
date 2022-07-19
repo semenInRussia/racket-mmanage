@@ -7,7 +7,7 @@ Manager of music.
 
 Contains some backends:
 
-- `spotify`
+- last.fm
 - YouTube.music
 
 You may create your own backend!

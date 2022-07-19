@@ -1,3 +1,6 @@
 #lang info
 
-(define deps '(mmanager-core))
+(define deps '("base"
+               "threading"
+               "http-easy"))
+
