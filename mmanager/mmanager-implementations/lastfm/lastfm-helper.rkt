@@ -39,9 +39,9 @@
 (define-struct lastfm-track (name artist album))
 
 (define (lastfm-json->track data)
-  (lastfm-artist (hash-ref data 'name)
-                 (lastfm-json->artist (hash-ref data 'artist))
-                 null))
+  (lastfm-track (hash-ref data 'name)
+                (lastfm-json->artist (hash-ref data 'artist))
+                null))
 
 (define (search-medium-img-url-in-json data)
   (if (hash-has-key? data 'image)
