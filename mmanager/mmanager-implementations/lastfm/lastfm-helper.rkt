@@ -8,9 +8,9 @@
  (struct-out lastfm-artist)
  (struct-out lastfm-album)
  (struct-out lastfm-track)
- lastfm-json->artist
- lastfm-json->album
- lastfm-json->track
+ hash->lastfm-artist
+ hash->lastfm-album
+ hash->lastfm-track
  lastfm-get-json)
 
 (define lastfm-base-url "http://ws.audioscrobbler.com/2.0")
@@ -19,16 +19,16 @@
 
 (define-struct lastfm-artist (name url img-url))
 
-(define (lastfm-json->artist data)
+(define (hash->lastfm-artist data)
   (lastfm-artist (hash-ref data 'name)
                  (hash-ref data 'url)
                  (search-medium-img-url-in-json data)))
 
 (define-struct lastfm-album (name artist url img-url))
 
-(define (lastfm-json->album data)
+(define (hash->lastfm-album data)
   (define name (hash-ref data 'name))
-  (define artist (lastfm-json->artist (hash-ref data 'artist)))
+  (define artist (hash->lastfm-artist (hash-ref data 'artist)))
   (define url (hash-ref data 'url))
   (define img-url (search-medium-img-url-in-json data))
   (make-lastfm-album name
@@ -38,36 +38,38 @@
 
 (define-struct lastfm-track (name artist album))
 
-(define (lastfm-json->track data)
+(define (hash->lastfm-track data)
   (lastfm-track (hash-ref data 'name)
-                (lastfm-json->artist (hash-ref data 'artist))
-                null))
+                (hash->lastfm-artist (hash-ref data 'artist))
+                void))
 
 (define (search-medium-img-url-in-json data)
-  (if (hash-has-key? data 'image)
-      (~>
-       data
-       (hash-ref 'image)
-       (findf medium-json-img? _)
-       (hash-ref '|#text|))
-      #f))
+  (and
+   (hash-has-key? data 'image)
+   (~>
+    data
+    (hash-ref 'image)
+    (findf medium-json-img? _)
+    (hash-ref '|#text|))))
 
 (define (medium-json-img? data)
   (string=? (hash-ref data 'size "") "medium"))
 
-(define (lastfm-get-json lastfm-method (params null))
-  (let ([params (to-string-params-values params)])
-    (read-response-json
-     (get lastfm-base-url
-          #:stream? #t
-          #:params (append
-                    params
-                    `((method . ,lastfm-method)
-                      (api_key . ,lastfm-api-key)
-                      (format . "json")))))))
+(define (lastfm-get-json lastfm-method (user-params null))
+  (define standard-params
+    `((method . ,lastfm-method)
+      (api_key . ,lastfm-api-key)
+      (format . "json")))
+  (define params
+    (to-string-params-values (append user-params standard-params)))
+  (read-response-json
+   (get lastfm-base-url
+        #:stream? #t
+        #:params params)))
 
 (define (to-string-params-values params)
   (for/list ([param params])
     (cons
      (car param)
      (format "~a" (cdr param)))))
+

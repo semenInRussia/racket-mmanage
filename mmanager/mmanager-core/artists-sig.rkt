@@ -9,5 +9,6 @@
  [artist-url        (-> any/c string?)]
  [artist-img-url    (-> any/c string?)]
 
- [artist-tracks-top (-> any/c (listof any/c))]
+ [artist-top-tracks (-> any/c (listof any/c))]
  [artist-albums     (-> any/c (listof any/c))])
+

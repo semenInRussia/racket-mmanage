@@ -11,8 +11,11 @@
 (define (search-artists-by-query artist-name)
   (search-artists (make-artist-model artist-name)))
 
+(define (get-artist artist-model)
+  (car (search-artists artist-model)))
+
 (define (search-artists artist-model)
-  (map lastfm-json->artist (search-json-artists artist-model)))
+  (map hash->lastfm-artist (search-json-artists artist-model)))
 
 (define (search-json-artists artist-model)
   (~>
@@ -29,12 +32,10 @@
                      (limit . ,limit)
                      (page . ,page))))
 
-(define get-artist (compose car search-artists))
-
 (define (artist-albums artist)
-  (map lastfm-json->album (artist-json-albums artist)))
+  (map hash->lastfm-album (json-artist-albums artist)))
 
-(define (artist-json-albums artist)
+(define (json-artist-albums artist)
   (~>
    artist
    lastfm-artist-name
@@ -57,25 +58,24 @@
 
 (define artist-img-url lastfm-artist-img-url)
 
-(define (artist-tracks-top artist)
-  (map lastfm-json->track (artist-json-tracks-top artist)))
+(define (artist-top-tracks artist)
+  (map hash->lastfm-track (json-artist-top-tracks artist)))
 
-(define (artist-json-tracks-top artist)
+(define (json-artist-top-tracks artist)
   (~>
    artist
    lastfm-artist-name
-   json-of-artist-tracks
+   json-of-artist-top-tracks
    (hash-ref 'toptracks)
    (hash-ref 'track)))
 
-(define (json-of-artist-tracks artist-name
-                               (autocorrect? #f)
-                               (page 1)
-                               (limit 30))
+(define (json-of-artist-top-tracks artist-name
+                                   (autocorrect? #f)
+                                   (page 1)
+                                   (limit 30))
   (let ([autocorrect? (if autocorrect? "1" "0")])
     (lastfm-get-json "artist.gettoptracks"
                      `((artist . ,artist-name)
                        (limit . ,limit)
                        (page . ,page)))))
-
 

@@ -23,14 +23,15 @@
 
   (check-equal?
    (artist-img-url (get-artist (make-artist-model "ac-dc")))
-   "https://lastfm.freetls.fastly.net/i/u/64s/2a96cbd8b46e442fc41c2b86b821562f.png")
+   (string-append
+    "https://lastfm.freetls.fastly.net/i/u/64s/"
+    "2a96cbd8b46e442fc41c2b86b821562f.png"))
 
   (let ([albums (artist-albums (get-artist (make-artist-model "ac-dc")))])
     (check-true
      (andmap lastfm-album? albums)))
 
-  (let ([tracks (artist-tracks-top (get-artist (make-artist-model "ac-dc")))])
+  (let ([tracks (artist-top-tracks (get-artist (make-artist-model "ac-dc")))])
     (check-true
      (andmap lastfm-track? tracks))))
-
 

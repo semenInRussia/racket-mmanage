@@ -12,3 +12,4 @@
 
  [album-artist           (-> any/c artist-model?)]
  [album-tracks           (-> any/c (listof track-model?))])
+
